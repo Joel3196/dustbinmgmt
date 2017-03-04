@@ -1,2 +1,2 @@
-# dustbinmgmt
-Dustbin Management System
+
+# Smart Dustbin Management System
