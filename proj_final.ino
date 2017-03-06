@@ -1,43 +1,74 @@
 #include <SoftwareSerial.h>
 SoftwareSerial mySerial(9, 10); 
-
+int t =0;
 int flag[6]={0,0,0,0,0,0};
+int current[5];
+int change=0;
 String pth="";
 void setup()
 {
   pinMode(7,INPUT);
   pinMode(6,INPUT);
   pinMode(5,INPUT);
+  pinMode(2,OUTPUT);
+  pinMode(3,INPUT);
   Serial.begin(9600);
   mySerial.begin(9600);
   
 }
 
-void loop()
+void loop() 
 {
-  flag[2]=fill();
-  flag[3]=meth();
-  flag[4]=digitalRead(5);
-
-  pth="";
-  find_path();
-  Serial.println(pth);
-  delay(5000);
+   
+  for(t=1;t<=5;t++)
+  {
+    current[t]=flag[t];
+  }
+  
+  flag[1]=fill();
+  flag[2]=meth();
+  flag[3]=digitalRead(5);
+  flag[4]=digitalRead(6);
+  flag[5]=digitalRead(7);   
+  pth="";  
+  for(t=1;t<=5;t++)
+  {    
+    if(current[t]!=flag[t])
+    {
+      change=1;
+      break;
+    } 
+  }
+  if(change==1)
+  {  
+    find_path();
+    Serial.println(pth);
+  } 
+  change=0; 
+  delay(1000);
 }
 
 int meth()
 {
-  int smoke=A0,smokeThres=300;
-  int val=analogRead(smoke);
-  return (val>smokeThres);
+ int smoke=A0,smokeThres=350;
+ int val=analogRead(smoke);
+ if(val>smokeThres)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
+  
 }
 
 
 int fill()
 {
   int trigPin=2,echoPin=3;
- long duration;
-long distanceCm, distanceInch;
+  long duration;
+  long distanceCm, distanceInch;
 
 digitalWrite(trigPin, LOW);
 delayMicroseconds(2);
@@ -53,7 +84,7 @@ else
 return 0;
 }
 
-void SendMessage(String message)
+/*void SendMessage(String message)
 {
   mySerial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
   delay(200);  // Delay of 1000 milli seconds or 1 second
@@ -63,7 +94,7 @@ void SendMessage(String message)
   delay(100);
    mySerial.println((char)26);// ASCII code of CTRL+Z
   delay(200);
-}
+}*/
 
 
 
